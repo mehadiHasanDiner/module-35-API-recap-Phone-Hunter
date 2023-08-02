@@ -103,6 +103,7 @@ const showPhoneDetails = (phoneDetails) => {
   modalContainer.textContent = "";
   const modalDiv = document.createElement("div");
   modalDiv.classList.add("modal-content");
+  const allSensors = phoneDetails.mainFeatures.sensors;
   modalDiv.innerHTML = `
     <div class="modal-header">
         <h1 class="modal-title fs-5" id="showPhoneDetailsModalLabel">Phone title: ${phoneDetails.name}</h1>
@@ -122,7 +123,8 @@ const showPhoneDetails = (phoneDetails) => {
           <li>NFC : ${phoneDetails.others.NFC}</li>
           <li>Radio : ${phoneDetails.others.Radio}</li>
           <li>USB : ${phoneDetails.others.USB}</li>
-          <li>WLAN : ${phoneDetails.others.WLAN}</li>
+          <li> WLAN : ${phoneDetails.others.WLAN} </li>
+          <li> Sensors : ${allSensors[0]}, ${allSensors[1]}, ${allSensors[2]}, ${allSensors[3]} </li>
         </ul>
         </div>
     <div class="modal-footer">
@@ -131,4 +133,5 @@ const showPhoneDetails = (phoneDetails) => {
   `;
   modalContainer.appendChild(modalDiv);
 };
+
 // loadPhones();
