@@ -15,9 +15,9 @@ const displayPhones = (phones, dataLimit) => {
   const showAll = document.getElementById("show-all");
   if (dataLimit && phones.length > 10) {
     phones = phones.slice(0, 10);
-    showAll.classList.remove("show-all");
+    showAll.classList.remove("d-none");
   } else {
-    showAll.classList.add("show-all");
+    showAll.classList.add("d-none");
   }
   const noFoundMsg = document.getElementById("no-found-msg");
   if (phones.length === 0) {
@@ -27,8 +27,8 @@ const displayPhones = (phones, dataLimit) => {
   }
 
   //   display all phones
-  const allPhones = phones.slice(0, 20);
-  allPhones.forEach((phone) => {
+
+  phones.forEach((phone) => {
     // console.log(phone);
     const phoneDiv = document.createElement("div");
     phoneDiv.classList.add("col");
@@ -40,6 +40,9 @@ const displayPhones = (phones, dataLimit) => {
                 <p class="card-text">This is a longer card with supporting text below as a natural lead-in
                     to additional
                     content. This content is a little bit longer.</p>
+
+                    <button onclick = "showDetails('${phone.slug}')" class="btn btn-primary text-white fw-bold " data-bs-toggle="modal" data-bs-target="#showPhoneDetailsModal"> Show Details</button>
+
             </div>
         </div>
     `;
@@ -55,7 +58,7 @@ const processSearch = (dataLimit) => {
   const searchText = searchField.value;
   //   console.log(searchText);
   loadPhones(searchText, dataLimit);
-  searchField.value = "";
+  // searchField.value = "";
 };
 
 const loadingSpinner = (isLoading) => {
@@ -73,7 +76,59 @@ const searchPhone = () => {
   processSearch(10);
 };
 
+// handle search button click
+document
+  .getElementById("search-field")
+  .addEventListener("keypress", function (event) {
+    console.log(event.key);
+    if (event.key === "Enter") {
+      processSearch(10);
+    }
+  });
+
 document.getElementById("btn-show-all").addEventListener("click", function () {
   processSearch();
 });
+
+const showDetails = async (id) => {
+  const url = `https://openapi.programming-hero.com/api/phone/${id}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  showPhoneDetails(data.data);
+};
+
+const showPhoneDetails = (phoneDetails) => {
+  console.log(phoneDetails);
+  const modalContainer = document.getElementById("modal-container");
+  modalContainer.textContent = "";
+  const modalDiv = document.createElement("div");
+  modalDiv.classList.add("modal-content");
+  modalDiv.innerHTML = `
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="showPhoneDetailsModalLabel">Phone title: ${phoneDetails.name}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class ="text-center mb-2"><img class = "" src="${phoneDetails.image}" alt=""></div>
+        <ul>
+          <li>Release Date: ${phoneDetails.releaseDate}</li>
+          <li>Brand: ${phoneDetails.brand}</li>
+          <li>Chip Set: ${phoneDetails.mainFeatures.chipSet}</li>
+          <li>Display Size: ${phoneDetails.mainFeatures.displaySize}</li>
+          <li>Memory: ${phoneDetails.mainFeatures.memory}</li>
+          <li>Storage: ${phoneDetails.mainFeatures.storage}</li>
+          <li>Bluetooth : ${phoneDetails.others.Bluetooth}</li>
+          <li>GPS : ${phoneDetails.others.GPS}</li>
+          <li>NFC : ${phoneDetails.others.NFC}</li>
+          <li>Radio : ${phoneDetails.others.Radio}</li>
+          <li>USB : ${phoneDetails.others.USB}</li>
+          <li>WLAN : ${phoneDetails.others.WLAN}</li>
+        </ul>
+        </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+  `;
+  modalContainer.appendChild(modalDiv);
+};
 // loadPhones();
